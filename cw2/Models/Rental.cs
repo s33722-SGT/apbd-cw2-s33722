@@ -8,7 +8,16 @@ public class Rental
     public DateTime RentalDate { get; private set; }
     public DateTime DueDate { get; private set; }
     public DateTime? ReturnDate { get; private set; }
-    
+
+    public bool WasReturnedOnTime
+    {
+        get
+        {
+            if (ReturnDate == null)
+                return false;
+            return  ReturnDate.Value <= DueDate;
+        }
+    }
     public Rental(Equipment equipment, User user, int rentDurationDays = 7)
     {
         Id = Guid.NewGuid();
@@ -21,5 +30,29 @@ public class Rental
     public void MarkAsReturned()
     {
         ReturnDate = DateTime.Now;
+    }
+
+    public void SimulatePassedDays(int days)
+    {
+        RentalDate = RentalDate.AddDays(-days);
+        DueDate = DueDate.AddDays(-days);
+    }
+
+    public override string ToString()
+    {
+        string rentalDateStr = RentalDate.ToString("yyyy-MM-dd");
+        string status;
+        if (ReturnDate == null)
+        {
+            status = $"Aktywne (do: {DueDate:yyyy-MM-dd})";
+        }
+        else
+        {
+            string onTime = WasReturnedOnTime ? "Tak" : "Nie";
+            status = $"Zwrócono {ReturnDate.Value:yyyy-MM-dd} (Terminowo: {onTime})";
+        }
+        
+ 
+        return $"[Wypożyczenie] {RentedEquipment.Name} -> {RentedBy.FirstName} {RentedBy.LastName} | Od: {rentalDateStr} | Status: {status}";
     }
 }

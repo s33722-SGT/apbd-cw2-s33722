@@ -14,4 +14,9 @@ public abstract class User
         FirstName = firstName;
         LastName = lastName;
     }
+    
+    override  public string ToString()
+    {
+        return $"{GetType().Name} {FirstName} {LastName} (limit {MaxRentals})";
+    }
 }

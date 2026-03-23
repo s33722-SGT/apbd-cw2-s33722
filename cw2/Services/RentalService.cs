@@ -16,7 +16,7 @@ public class RentalService
         _userRepository = userRepo;
         }
 
-    public Rental RentEquipment(Guid equipmentId, Guid userId)
+    public Rental RentEquipment(Guid equipmentId, Guid userId, int durationDays = 7)
     {
         var equipment = _equipmentRepository.GetById(equipmentId);
         var user = _userRepository.GetById(userId);
@@ -38,7 +38,7 @@ public class RentalService
 
         if (isAlreadyRented)
         {
-            throw new Exception("Sprzet zajety");
+            throw new Exception($"Sprzet zajety, zablokowano akcje dla {user} - {equipment}");
         }
 
         int activeRentalsCount = 0;
@@ -54,7 +54,7 @@ public class RentalService
         {
             throw new Exception($"Uzytkownik osiagnal juz swoj limit wypozyczen ({user.MaxRentals})");
         }
-        var newRental = new Rental(equipment, user);
+        var newRental = new Rental(equipment, user, durationDays);
         _rentals.Add(newRental);
         return newRental;
     }

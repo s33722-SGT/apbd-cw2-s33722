@@ -21,4 +21,9 @@ public abstract class Equipment
     {
         IsAvailable = false;
     }
+
+    override public string ToString()
+    {
+        return $"{GetType().Name} {Name}";
+    }
 }
