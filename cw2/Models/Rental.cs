@@ -44,15 +44,15 @@ public class Rental
         string status;
         if (ReturnDate == null)
         {
-            status = $"Aktywne (do: {DueDate:yyyy-MM-dd})";
+            status = $"Active (until: {DueDate:yyyy-MM-dd})";
         }
         else
         {
-            string onTime = WasReturnedOnTime ? "Tak" : "Nie";
-            status = $"Zwrócono {ReturnDate.Value:yyyy-MM-dd} (Terminowo: {onTime})";
+            string onTime = WasReturnedOnTime ? "Yes" : "No";
+            status = $"Returned {ReturnDate.Value:yyyy-MM-dd} (due time was: {onTime})";
         }
         
  
-        return $"[Wypożyczenie] {RentedEquipment.Name} -> {RentedBy.FirstName} {RentedBy.LastName} | Od: {rentalDateStr} | Status: {status}";
+        return $"[Rental] {RentedEquipment.Name} -> {RentedBy.FirstName} {RentedBy.LastName} | Since: {rentalDateStr} | Status: {status}";
     }
 }

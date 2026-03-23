@@ -4,24 +4,19 @@ public abstract class Equipment
 {
     public Guid Id { get; private set; }
     public string Name { get; private set; }
-    public bool IsAvailable { get; private set; }
+
+    public bool IsDameged { get; private set; } = false;
     
     protected Equipment(string name)
     {
         Id = Guid.NewGuid();
         Name = name;
-        IsAvailable = true;
     }
     
-    public void MarkAsAvailable()
+    public void MarkAsDameged()
     {
-        IsAvailable = true;
+        IsDameged = true;
     }
-    public void MarkAsUnavailable()
-    {
-        IsAvailable = false;
-    }
-
     override public string ToString()
     {
         return $"{GetType().Name} {Name}";

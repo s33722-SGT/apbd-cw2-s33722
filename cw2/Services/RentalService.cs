@@ -23,7 +23,12 @@ public class RentalService
 
         if (equipment == null || user == null)
         {
-            throw new Exception("Nie znaleziono sprzetu lub osoby");
+            throw new Exception("User or equipment not found");
+        }
+
+        if (equipment.IsDameged)
+        {
+            throw new Exception("Equipment is damaged");
         }
         
         bool isAlreadyRented = false;
@@ -38,7 +43,7 @@ public class RentalService
 
         if (isAlreadyRented)
         {
-            throw new Exception($"Sprzet zajety, zablokowano akcje dla {user} - {equipment}");
+            throw new Exception($"Equipment is not available, blocked: {user} - {equipment}");
         }
 
         int activeRentalsCount = 0;
@@ -52,7 +57,7 @@ public class RentalService
 
         if (activeRentalsCount >= user.MaxRentals)
         {
-            throw new Exception($"Uzytkownik osiagnal juz swoj limit wypozyczen ({user.MaxRentals})");
+            throw new Exception($"User has already reached the rental limit ({user.MaxRentals})");
         }
         var newRental = new Rental(equipment, user, durationDays);
         _rentals.Add(newRental);
@@ -73,8 +78,49 @@ public class RentalService
 
         if (activeRental == null)
         {
-            throw new Exception("Nie znaleziono aktywnego wypozyczenia dla tego sprzetu");
+            throw new Exception("Did not found active rental for this equipment");
         }
         activeRental.MarkAsReturned();
+    }
+
+    public bool IsEquipmentAvailable(Guid equipmentId)
+    {
+        var equipment = _equipmentRepository.GetById(equipmentId);
+        if (equipment != null && equipment.IsDameged)
+            return false;
+
+        foreach (var rental in _rentals)
+        {
+            if (rental.RentedEquipment.Id == equipmentId && rental.ReturnDate == null)
+            {
+                return false;
+            }   
+        }
+        return true;
+    }
+
+    public List<Rental> GetActiveRentalsForUser(Guid userId)
+    {
+        List<Rental> activeRentals = new List<Rental>();
+        foreach (var rental in _rentals)
+        {
+            if (rental.RentedBy.Id == userId && rental.ReturnDate == null)
+            {
+                activeRentals.Add(rental);
+            }
+        }
+        return activeRentals;
+    }
+    public List<Rental> GetOverdueRentals()
+    {
+        List<Rental> overdueRentals = new List<Rental>();
+        foreach (var rental in _rentals)
+        {
+            if (rental.ReturnDate == null && DateTime.Now > rental.DueDate)
+            {
+                overdueRentals.Add(rental);
+            }
+        }
+        return overdueRentals;
     }
 }
