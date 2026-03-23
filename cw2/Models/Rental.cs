@@ -24,7 +24,7 @@ public class Rental
         RentedEquipment = equipment;
         RentedBy = user;
         RentalDate = DateTime.Now;
-        DueDate = DateTime.Now.AddDays(rentDurationDays);
+        DueDate = RentalDate.AddDays(rentDurationDays);
     }
 
     public void MarkAsReturned()
